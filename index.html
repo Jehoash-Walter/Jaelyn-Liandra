@@ -4,4 +4,58 @@ body{margin:0;background:linear-gradient(135deg,#fff8f5,#f8dfe6,#fff5df);font-fa
 </style></head><body><div class="wrap"><div class="card"><div class="cross">✝</div><div class="tag">A LITTLE TREASURE FROM GOD</div><h1>Treasure Hunt</h1><div class="gem">💎</div>
 <div id="form"><p class="intro">You found the hidden treasure!<br>Enter your details to unlock a special message about our daughter's beautiful name.</p><div class="box"><label>Your Name</label><input id="n" placeholder="Enter your name"><label>Mobile Number</label><input id="m" type="tel" placeholder="Enter your mobile number"><button onclick="unlock()">🔐 Unlock the Treasure</button><p class="small">Your details are collected only for our baptism celebration.</p></div></div>
 <div id="result" class="hidden"><h2>✨ Treasure Unlocked! ✨</h2><p>Thank you, <span id="guest" class="name"></span>!</p><div class="box"><h2 class="name">Jaelyn</h2><p>Modern name often associated with <b>“thankful,” “God has heard,” or “gift from God.”</b></p><p>Soft, contemporary, and easy to pronounce.</p><h2 class="name">Liandra</h2><p>Feminine form of Liander/Leander.</p><p>Commonly interpreted as <b>“lion-hearted,” “brave,” “strong leader,” or “courageous woman.”</b></p></div><div class="meaning"><h3>💕 Combined Meaning</h3><p><b>Jaelyn Liandra</b></p><p><i>“A child heard by God, growing into a brave and lion-hearted woman.”</i></p><p><b>or</b></p><p><i>“God's precious gift, blessed with courage and strength.”</i></p></div><p>✝ Let us rejoice in His love and grace ✝</p></div></div></div>
-<script>function unlock(){let n=document.getElementById('n').value.trim(),m=document.getElementById('m').value.trim();if(!n||!m){alert('Please enter your Name and Mobile Number.');return}document.getElementById('guest').textContent=n;document.getElementById('form').classList.add('hidden');document.getElementById('result').classList.remove('hidden')}</script></body></html>
+<script>
+const APPS_SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE";
+
+function unlock() {
+
+  let n = document.getElementById('n').value.trim();
+  let m = document.getElementById('m').value.trim();
+
+  if (!n || !m) {
+    alert('Please enter your Name and Mobile Number.');
+    return;
+  }
+
+  // Disable button while saving
+  const button = document.querySelector('button');
+  button.disabled = true;
+  button.textContent = '🔐 Unlocking...';
+
+  // Send guest details to Google Sheet
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify({
+      name: n,
+      mobile: m
+    })
+  })
+  .then(response => response.text())
+  .then(data => {
+
+    console.log('Google Sheet response:', data);
+
+    // Show guest name
+    document.getElementById('guest').textContent = n;
+
+    // Hide form
+    document.getElementById('form').classList.add('hidden');
+
+    // Show meaning
+    document.getElementById('result').classList.remove('hidden');
+
+  })
+  .catch(error => {
+
+    console.error('Error:', error);
+
+    alert('Something went wrong. Please try again.');
+
+    button.disabled = false;
+    button.textContent = '🔐 Unlock the Treasure';
+  });
+}
+</script>
